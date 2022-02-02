@@ -71,11 +71,13 @@ def OrientTuningCurve(theta, X):
 
 def PosTuningCurve(x, y, X, Y):
     #generates tuning curve w.r.t. to the given center (x, y)
-    #num = number of nodes in the interval [-10,10] x [-10,10]
+def PosTuningCurve(x, y, X, Y):
+    #generates tuning curve w.r.t. to the given center (x, y)
+    #num = number of nodes in the interval [-1,1] x [-1,1]
     assert(X[0] <= x and x <= X[-1])
     assert(Y[0] <= y and y <= Y[-1])
     mu = np.array([x, y])
-    Sigma = np.array([[5 , 0.], [0.,  5]])
+    Sigma = np.array([[0.2 , 0.], [0.,  0.2]])
     X, Y = np.meshgrid(X, Y)
     pos = np.empty(X.shape + (2,))
     pos[:, :, 0] = X
