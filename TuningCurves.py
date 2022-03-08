@@ -1,5 +1,5 @@
 #Created by Ricky Huang
-#Low-level functions for generating Gaussian field and tuning curves
+'''Low-level functions for generating Gaussian field and tuning curves'''
 import numpy as np
 import matplotlib.pyplot as plt
 import scipy.stats as stats
@@ -69,8 +69,6 @@ def OrientTuningCurve(theta, X):
     [mu, var] = theta, 0.5
     return GaussPDFwrap(0, np.pi, mu, var, X)
 
-def PosTuningCurve(x, y, X, Y):
-    #generates tuning curve w.r.t. to the given center (x, y)
 def PosTuningCurve(x, y, X, Y):
     #generates tuning curve w.r.t. to the given center (x, y)
     #num = number of nodes in the interval [-1,1] x [-1,1]
