@@ -20,6 +20,8 @@
  
  NSclasses.py provides the basic data structure to pack neuron and stimulus objects
  
+ Note:
+ ModelUtil.py needs some extra examination, specifically the CircularRFWt function
  
  
  
