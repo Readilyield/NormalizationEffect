@@ -1,5 +1,5 @@
 # Normalization Effect
- Study the effect of normalization in V1 neurons
+ This small project seeks to study the effect of normalization in V1 neurons
  
  In this exercise, we simulated V1 neurons in a uniform-grid set up.
  We also implemented a Macro-micro grid set up, which is also the Neuron grid in the codes.
