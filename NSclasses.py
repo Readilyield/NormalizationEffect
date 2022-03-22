@@ -46,6 +46,9 @@ class MyNrn:
         X = np.linspace(-1*xlim, xlim, self.grid.xnum, endpoint = True)
         Y = np.linspace(-1*ylim, ylim, self.grid.xnum, endpoint = True)
         return PosTuningCurve(self.x, self.y, X, Y)
+    
+    def __repr__(self):
+        return f'object of class MyNrn:\nx={self.x}\ny={self.y}\ntheta={self.theta}\ngrid={self.grid}'
         
 
 #Point Stimulus class (vector)
