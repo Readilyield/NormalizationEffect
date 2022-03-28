@@ -4,6 +4,7 @@ import numpy as np
 from NrnResponse import *
 from NSclasses import *
 import matplotlib.pyplot as plt
+import seaborn as sns
 
 '''Creates nxn Macro grid'''
 def getMacroGrid(nodes):
@@ -63,60 +64,142 @@ def MicroGridPlot(neurons):
 
 
 '''Creates the Neuron Grid'''
-def getNeuronGrid(nodes, micro = 3, flag = 0):
-    #nodes = number of neurons in the MacroGrid
+def getNeuronGrid(nodes, micro = 3, flag=0):
+    """
+    Nick's version
+    """
+    allNeurons = []
+    assert(nodes >= 3)
     
-    MacroNeurons, Grid, h = getMacroGrid(nodes)
-    allNeurons = [0] * (nodes**2 * micro**2)
+    Grid = Mygrid(1, 1, 50, 50)
+    #Xgrid and Ygrid within [-1, 1]x[-1, 1] 
+    Xspace = np.linspace(-1+0.5, 1-0.5, num=nodes, endpoint=True)
+    Yspace = np.linspace(-1+0.5, 1-0.5, num=nodes, endpoint=True)
+    h = Xspace[1] - Xspace[0]
+    orientations = np.linspace(0, np.pi, 9)
     
-    
-    MatrixNeuron = getMicroGrid(MacroNeurons[0], h, Grid, micro = 3)
-    for j in range(1,nodes):
-        temp = getMicroGrid(MacroNeurons[j], h, Grid)
-        MatrixNeuron = np.vstack((temp, MatrixNeuron))
-    
-    for i in range(1,nodes):
-        temp_col = getMicroGrid(MacroNeurons[i*nodes], h, Grid)
-        for j in range(1,nodes):
-            temp = getMicroGrid(MacroNeurons[j+i*nodes], h, Grid)
-            temp_col = np.vstack((temp, temp_col))
-        MatrixNeuron = np.hstack((MatrixNeuron, temp_col))
-    
-    allNeurons = np.reshape(MatrixNeuron, (1, nodes**2 * micro**2))[0]
-    
-    '''Plots the neuron grid'''
-    if (flag == 100): #plot micro-grid neuron centers
-        allNeurons = np.flip(allNeurons)
-        fig, axes = plt.subplots(nodes,nodes,figsize = [9,8])
-        
-        for i in range(nodes):
+    allNeurons = []
+    for i in range(nodes):
+        for micro_i in range(micro):
             for j in range(nodes):
-                ax = axes[i,j]
-                r = i*micro
-                c = j*nodes*micro**2
-                temp1 = allNeurons[r+c:r+c+micro]
-                temp1 = np.transpose(temp1)
-                temp2 = allNeurons[r+c+nodes*micro:r+c+nodes*micro+micro]
-                temp2 = np.transpose(temp2)
-                temp3 = allNeurons[r+c+nodes*micro*2:r+c+nodes*micro*2+micro]
-                temp3 = np.transpose(temp3)
-                temp = np.hstack((temp1, temp2, temp3))
-                x, y = MicroGridPlot(temp)
-                ax.set_xlim(-1, 1)
-                ax.set_ylim(-1, 1)
-                cl = ['b']*micro**2
-                cl[micro+1] = 'r'
-                ax.scatter(x, y, color =cl, alpha=0.5)
-        fig.tight_layout()
-        title = '{2}x{3} MicroGrid in {0}x{1} MacroGrid'
-        st = fig.suptitle(title.format(nodes, nodes, micro, micro), 
-                          fontsize = 16)
-        st.set_y(0.95)
-        fig.subplots_adjust(top=0.9)
-        allNeurons = np.flip(allNeurons)
-        plt.show()
+                for micro_j in range(micro):
+                    micro_n = micro*(micro_i) + micro_j
+                    # i will end up as the row dimension, which is actually y
+                    # similarly, j will end up as the col dimension, which is actually x
+                    x = Xspace[j]
+                    y = Yspace[i]
+                    neuron = MyNrn(x, y, orientations[micro_n], Grid)
+                    allNeurons.append(neuron)
+    return allNeurons, h 
 
-    if (flag == 0):    
-        return allNeurons, h/3
+def checkNeuronGrid():
+    '''Created by Nick'''
+    neur_grid, _, = getNeuronGrid(3, micro=3, flag = 100)
+    resps = []
+    for ii in range(len(neur_grid)):
+        resps.append(neur_grid[ii].x)
+    sns.heatmap(np.array(resps).reshape(9,9))
+    plt.title('x location')
+    plt.show()
+
+    resps = []
+    for ii in range(len(neur_grid)):
+        resps.append(neur_grid[ii].y)
+    sns.heatmap(np.array(resps).reshape(9,9))
+    plt.title('y location')
+    plt.show()
+
+    resps = []
+    for ii in range(len(neur_grid)):
+        resps.append(neur_grid[ii].theta)
+    sns.heatmap(np.array(resps).reshape(9,9))
+    plt.title('theta')
+    plt.show()
+
+    resps = []
+    for ii in range(len(neur_grid)):
+    #     print(MacroNeurons[ii])
+        resp = NrnResponse(neur_grid[ii],  MyPtStm(0,0, np.pi/2), neur_grid[ii].grid)
+        resps.append(resp)
+    sns.heatmap(np.array(resps).reshape(9,9))
+    plt.title('response to point stimulus')
+    plt.show()
+
+def visualizeNeuronGrid():
+    '''Created by Nick'''
+    neur_grid, _, = getNeuronGrid(3, micro=3, flag = 100)
+    from mpl_toolkits.axes_grid1 import ImageGrid
+    neur_grid_curves = [neur_grid[ii].PosCurve() for ii in range(81)]
+
+    fig = plt.figure(figsize=(10., 10.))
+    grid = ImageGrid(fig, 111,  # similar to subplot(111)
+                    nrows_ncols=(9, 9),  # creates 2x2 grid of axes
+                    axes_pad=0.01,  # pad between axes in inch.
+                    )
+
+    for ax, im in zip(grid, neur_grid_curves):
+        # Iterating over the grid returns the Axes.
+        ax.imshow(im)
+
+    plt.show()
+
+#visualizeNeuronGrid()
+
+'''!!!This is an old version with many bugs'''
+# def getNeuronGrid(nodes, micro = 3, flag = 0):
+#     #nodes = number of neurons in the MacroGrid
+    
+#     MacroNeurons, Grid, h = getMacroGrid(nodes)
+#     allNeurons = [0] * (nodes**2 * micro**2)
+    
+    
+#     MatrixNeuron = getMicroGrid(MacroNeurons[0], h, Grid, micro = 3)
+#     for j in range(1,nodes):
+#         temp = getMicroGrid(MacroNeurons[j], h, Grid)
+#         MatrixNeuron = np.vstack((temp, MatrixNeuron))
+    
+#     for i in range(1,nodes):
+#         temp_col = getMicroGrid(MacroNeurons[i*nodes], h, Grid)
+#         for j in range(1,nodes):
+#             temp = getMicroGrid(MacroNeurons[j+i*nodes], h, Grid)
+#             temp_col = np.vstack((temp, temp_col))
+#         MatrixNeuron = np.hstack((MatrixNeuron, temp_col))
+    
+#     allNeurons = np.reshape(MatrixNeuron, (1, nodes**2 * micro**2))[0]
+    
+#     '''Plots the neuron grid'''
+#     if (flag == 100): #plot micro-grid neuron centers
+#         allNeurons = np.flip(allNeurons)
+#         fig, axes = plt.subplots(nodes,nodes,figsize = [9,8])
+        
+#         for i in range(nodes):
+#             for j in range(nodes):
+#                 ax = axes[i,j]
+#                 r = i*micro
+#                 c = j*nodes*micro**2
+#                 temp1 = allNeurons[r+c:r+c+micro]
+#                 temp1 = np.transpose(temp1)
+#                 temp2 = allNeurons[r+c+nodes*micro:r+c+nodes*micro+micro]
+#                 temp2 = np.transpose(temp2)
+#                 temp3 = allNeurons[r+c+nodes*micro*2:r+c+nodes*micro*2+micro]
+#                 temp3 = np.transpose(temp3)
+#                 temp = np.hstack((temp1, temp2, temp3))
+#                 x, y = MicroGridPlot(temp)
+#                 ax.set_xlim(-1, 1)
+#                 ax.set_ylim(-1, 1)
+#                 cl = ['b']*micro**2
+#                 cl[micro+1] = 'r'
+#                 ax.scatter(x, y, color =cl, alpha=0.5)
+#         fig.tight_layout()
+#         title = '{2}x{3} MicroGrid in {0}x{1} MacroGrid'
+#         st = fig.suptitle(title.format(nodes, nodes, micro, micro), 
+#                           fontsize = 16)
+#         st.set_y(0.95)
+#         fig.subplots_adjust(top=0.9)
+#         allNeurons = np.flip(allNeurons)
+#         plt.show()
+
+#     if (flag == 0):    
+#         return allNeurons, h/3
 
 #getNeuronGrid(3, flag = 100)

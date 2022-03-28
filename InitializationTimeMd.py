@@ -5,7 +5,7 @@ import numpy as np
 from NrnResponse import *
 from NSclasses import *
 from ModelUtil import *
-from NeuronGrid import *
+from NeuronGrid import getNeuronGrid
 
 
 def MicroInitialization(nodes, micro = 1):
