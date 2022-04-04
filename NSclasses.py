@@ -24,9 +24,11 @@ class Mygrid:
 '''My neuron class with preferred 2D position and 1D orientation in radian'''
 #neuron class
 class MyNrn:
-    def __init__(self, x, y, theta, Mygrid):
+    def __init__(self, x, y, Xind, Yind, theta, Mygrid):
         self.x = x
         self.y = y
+        self.Xind = Xind
+        self.Yind = Yind
         self.theta = theta
         self.grid = Mygrid
     

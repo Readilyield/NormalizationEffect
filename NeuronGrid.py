@@ -62,21 +62,35 @@ def MicroGridPlot(neurons):
     
     return x, y
 
+'''Finds the index in array such that array[index] is closest to value'''
+def FindNearest(array, value):
+    ind = (np.abs(array - value)).argmin()
+    return ind
 
 '''Creates the Neuron Grid'''
 def getNeuronGrid(nodes, micro = 3, flag=0):
     """
-    Nick's version
+    Nick's version, modified by Ricky
     """
-    allNeurons = []
     assert(nodes >= 3)
+    assert(micro%2 == 1)
     
+    allNeurons = []
     Grid = Mygrid(1, 1, 50, 50)
     #Xgrid and Ygrid within [-1, 1]x[-1, 1] 
     Xspace = np.linspace(-1+0.5, 1-0.5, num=nodes, endpoint=True)
     Yspace = np.linspace(-1+0.5, 1-0.5, num=nodes, endpoint=True)
-    h = Xspace[1] - Xspace[0]
-    orientations = np.linspace(0, np.pi, 9)
+    
+    #XspaceAll = np.linspace(-1+0.5, 1-0.5, num=nodes*micro, endpoint=True)
+    hx = (Xspace[1] - Xspace[0])/micro
+    Xglobal = np.arange(-1, 1+hx, hx)
+    
+    
+    #YspaceAll = np.linspace(-1+0.5, 1-0.5, num=nodes*micro, endpoint=True)
+    hy = (Yspace[1] - Yspace[0])/micro
+    Yglobal = np.arange(-1, 1+hy, hy)
+    
+    orientations = np.linspace(0, np.pi, micro**2)
     
     allNeurons = []
     for i in range(nodes):
@@ -85,12 +99,21 @@ def getNeuronGrid(nodes, micro = 3, flag=0):
                 for micro_j in range(micro):
                     micro_n = micro*(micro_i) + micro_j
                     # i will end up as the row dimension, which is actually y
-                    # similarly, j will end up as the col dimension, which is actually x
+                    # j will end up as the col dimension, which is actually x
                     x = Xspace[j]
                     y = Yspace[i]
-                    neuron = MyNrn(x, y, orientations[micro_n], Grid)
+                    
+                    Xnode = Xglobal[FindNearest(Xglobal, x - hx*(micro-1)/2)]
+                    Xind = int(np.where(Xglobal == Xnode)[0][0]+micro_j)
+                    
+                    Ynode = Yglobal[FindNearest(Yglobal, y - hy*(micro-1)/2)]
+                    Yind = int(np.where(Yglobal == Ynode)[0][0]+micro_i)
+                    
+                    neuron = MyNrn(x, y, Xind, Yind, orientations[micro_n], Grid)
                     allNeurons.append(neuron)
-    return allNeurons, h 
+                    
+    Axis = [Xglobal, Yglobal]
+    return allNeurons, Axis
 
 def checkNeuronGrid():
     '''Created by Nick'''
