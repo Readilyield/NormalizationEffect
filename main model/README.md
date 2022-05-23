@@ -16,11 +16,13 @@
  
  Other necessary files:
 
- **NrnResponse.py** returns the response of a neuron w.r.t. a point stimulus
+ *NrnResponse.py* returns the response of a neuron w.r.t. a point stimulus
  
- **TuningCurves.py** provides the receptive field for a neuron to generate a response
+ *TuningCurves.py* provides the receptive field for a neuron to generate a response
  
- **NSclasses.py** provides the basic data structured to pack neuron and stimulus objects
+ *NSclasses.py* provides the basic data structured to pack neuron and stimulus objects
+ 
+Ancillary files:
  
  **Test_Radius.py** aims to find the largest viable connectivity radius in the Neuron grid for a consistent post-normalization response distribution 
  
