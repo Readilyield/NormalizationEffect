@@ -6,6 +6,8 @@
  
  Then, we produced the animated simulation w.r.t. to a point stimulus at the center of the uniform-grid.
  
+ ## File funcsions
+ 
  To get a new simulation: run **Model_Main.py**
  
  **Model_Main.py** requires **InitializationTimeMd.py** to initialize;
@@ -19,6 +21,8 @@
  **TuningCurves.py** provides the receptive field for a neuron to generate a response
  
  **NSclasses.py** provides the basic data structured to pack neuron and stimulus objects
+ 
+ **Test_Radius.py** aims to find the largest viable connectivity radius in the Neuron grid for a consistent post-normalization response distribution 
  
 
  
