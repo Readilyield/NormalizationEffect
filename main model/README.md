@@ -14,7 +14,7 @@
  
  **InitializationTimeMd.py** reuires **NeuronGrid.py** and **ModelUtil.py** to provide instruction for computations.
  
- Other necessary files:
+ ### Other necessary files:
 
  *NrnResponse.py* returns the response of a neuron w.r.t. a point stimulus
  
@@ -22,7 +22,7 @@
  
  *NSclasses.py* provides the basic data structured to pack neuron and stimulus objects
  
-Ancillary files:
+### Ancillary files:
  
  **Test_Radius.py** aims to find the largest viable connectivity radius in the Neuron grid for a consistent post-normalization response distribution 
  
