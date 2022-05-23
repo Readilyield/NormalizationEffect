@@ -6,7 +6,7 @@
  
  Then, we produced the animated simulation w.r.t. to a point stimulus at the center of the uniform-grid.
  
- ## File funcsions
+ ## File functions
  
  To get a new simulation: run **Model_Main.py**
  
